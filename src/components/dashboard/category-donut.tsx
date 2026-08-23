@@ -10,13 +10,13 @@ interface Slice {
   color: string;
 }
 
-export function CategoryDonut({ data }: { data: Slice[] }) {
+export function CategoryDonut({ data, title = "Spending by Category" }: { data: Slice[]; title?: string }) {
   const total = data.reduce((s, d) => s + d.value, 0);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Spending by Category</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center gap-6 sm:flex-row">

@@ -117,3 +117,75 @@ export const recurringSchema = z.object({
 });
 
 export type RecurringInput = z.infer<typeof recurringSchema>;
+
+// ── Loans (spec §18–20) ────────────────────────────────────────
+
+export const loanSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  principal: z.coerce.number().positive("Loan amount must be greater than zero"),
+  interestRate: z.coerce.number().min(0, "Rate cannot be negative").max(100),
+  tenureMonths: z.coerce.number().int().positive("Tenure must be at least 1 month").max(600),
+  startDate: z.coerce.date(),
+  processingFee: z.coerce.number().nonnegative().default(0),
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
+});
+
+export type LoanInput = z.infer<typeof loanSchema>;
+
+// ── Investments (spec §16) ─────────────────────────────────────
+
+export const investmentTypes = [
+  "STOCK",
+  "MUTUAL_FUND",
+  "ETF",
+  "IPO",
+  "FIXED_DEPOSIT",
+  "GOLD",
+  "CRYPTO",
+  "OTHER",
+] as const;
+
+export const investmentSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  type: z.enum(investmentTypes).default("STOCK"),
+  amountInvested: z.coerce.number().positive("Amount must be greater than zero"),
+  quantity: z.coerce.number().nonnegative().optional().nullable(),
+  purchasePrice: z.coerce.number().nonnegative().optional().nullable(),
+  purchaseDate: z.coerce.date(),
+  currentValue: z.coerce.number().nonnegative().optional().nullable(),
+  expectedReturn: z.coerce.number().optional().nullable(),
+  platform: z.string().trim().max(60).optional().or(z.literal("")),
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
+});
+
+export type InvestmentInput = z.infer<typeof investmentSchema>;
+
+// ── IPOs (spec §17) ────────────────────────────────────────────
+
+export const ipoStatuses = [
+  "PLANNING",
+  "APPLIED",
+  "ALLOTTED",
+  "NOT_ALLOTTED",
+  "LISTED",
+  "SOLD",
+] as const;
+
+export const ipoSchema = z.object({
+  companyName: z.string().trim().min(1, "Company is required").max(80),
+  ipoName: z.string().trim().max(80).optional().or(z.literal("")),
+  openDate: z.coerce.date().optional().nullable(),
+  closeDate: z.coerce.date().optional().nullable(),
+  priceBandLow: z.coerce.number().nonnegative().optional().nullable(),
+  priceBandHigh: z.coerce.number().nonnegative().optional().nullable(),
+  lotSize: z.coerce.number().int().nonnegative().optional().nullable(),
+  lots: z.coerce.number().int().nonnegative().default(0),
+  amountApplied: z.coerce.number().nonnegative().optional().nullable(),
+  status: z.enum(ipoStatuses).default("PLANNING"),
+  listingDate: z.coerce.date().optional().nullable(),
+  listingPrice: z.coerce.number().nonnegative().optional().nullable(),
+  currentPrice: z.coerce.number().nonnegative().optional().nullable(),
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
+});
+
+export type IpoInput = z.infer<typeof ipoSchema>;

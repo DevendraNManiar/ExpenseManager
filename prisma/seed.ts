@@ -7,6 +7,7 @@
  */
 import { PrismaClient, TransactionType } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { calculateEmi, amortizationSchedule } from "../src/lib/finance";
 
 const prisma = new PrismaClient();
 
@@ -107,6 +108,71 @@ async function main() {
       { userId: user.id, name: "Emergency Fund", targetAmount: 100000, currentAmount: 65000, color: "#10b981" },
       { userId: user.id, name: "New Laptop", targetAmount: 120000, currentAmount: 48000, color: "#0ea5e9" },
     ],
+  });
+
+  // Loan with amortization schedule (first few EMIs paid).
+  await prisma.loan.deleteMany({ where: { userId: user.id } });
+  const loanStart = new Date(y - 1, m, 5);
+  const emi = calculateEmi(2500000, 8.5, 240);
+  const schedule = amortizationSchedule(2500000, 8.5, 240, loanStart);
+  await prisma.loan.create({
+    data: {
+      userId: user.id,
+      name: "Home Loan",
+      principal: 2500000,
+      interestRate: 8.5,
+      tenureMonths: 240,
+      startDate: loanStart,
+      processingFee: 15000,
+      emiAmount: emi.emi,
+      totalInterest: emi.totalInterest,
+      totalPayable: emi.totalPayable,
+      status: "ACTIVE",
+      payments: {
+        create: schedule.map((row, idx) => ({
+          installmentNo: row.installmentNo,
+          dueDate: row.dueDate,
+          principalPart: row.principalPart,
+          interestPart: row.interestPart,
+          emiAmount: row.emiAmount,
+          balanceAfter: row.balanceAfter,
+          isPaid: idx < 12,
+          paidAt: idx < 12 ? row.dueDate : null,
+        })),
+      },
+    },
+  });
+
+  // Investments
+  await prisma.investment.deleteMany({ where: { userId: user.id } });
+  await prisma.investment.createMany({
+    data: [
+      { userId: user.id, name: "Nifty 50 Index Fund", type: "MUTUAL_FUND", amountInvested: 120000, currentValue: 148500, purchaseDate: new Date(y - 1, 2, 15), platform: "Groww" },
+      { userId: user.id, name: "Reliance Industries", type: "STOCK", amountInvested: 80000, quantity: 32, purchasePrice: 2500, currentValue: 92000, purchaseDate: new Date(y - 1, 6, 10), platform: "Zerodha" },
+      { userId: user.id, name: "Sovereign Gold Bond", type: "GOLD", amountInvested: 60000, currentValue: 71000, purchaseDate: new Date(y - 1, 0, 20) },
+      { userId: user.id, name: "Emergency FD", type: "FIXED_DEPOSIT", amountInvested: 100000, currentValue: 107000, purchaseDate: new Date(y - 1, 4, 1) },
+    ],
+  });
+
+  // IPO
+  await prisma.ipo.deleteMany({ where: { userId: user.id } });
+  await prisma.ipo.create({
+    data: {
+      userId: user.id,
+      companyName: "Acme Technologies",
+      ipoName: "Acme Tech IPO",
+      openDate: new Date(y, m, 3),
+      closeDate: new Date(y, m, 6),
+      priceBandLow: 280,
+      priceBandHigh: 300,
+      lotSize: 50,
+      lots: 2,
+      amountApplied: 30000,
+      status: "ALLOTTED",
+      listingDate: new Date(y, m, 12),
+      listingPrice: 355,
+      currentPrice: 372,
+    },
   });
 
   console.log(`✓ Seeded demo user ${user.email} (password: demo1234)`);

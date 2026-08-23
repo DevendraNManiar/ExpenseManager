@@ -21,7 +21,7 @@ export default function LandingPage() {
       <main className="mx-auto max-w-6xl px-6">
         <section className="py-20 text-center sm:py-28">
           <span className="inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-            <Sparkles className="size-3.5 text-primary" /> Your personal financial operating system
+            <Sparkles className="size-3.5 text-primary" /> Your personal finance command center
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
             Understand your money.{" "}

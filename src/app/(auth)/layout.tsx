@@ -5,7 +5,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="app-aurora flex min-h-screen flex-col">
       <header className="mx-auto flex h-16 w-full max-w-6xl items-center px-6">
-        <Link href="/" aria-label="MoneyOS home">
+        <Link href="/" aria-label="Expense Manager home">
           <Logo />
         </Link>
       </header>

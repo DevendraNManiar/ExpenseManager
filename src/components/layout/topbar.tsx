@@ -36,7 +36,7 @@ export function Topbar({ refs, userName, userEmail, unread }: Props) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur lg:px-8">
       <MobileMenu />
-      <Link href="/dashboard" className="lg:hidden" aria-label="MoneyOS home">
+      <Link href="/dashboard" className="lg:hidden" aria-label="Expense Manager home">
         <Logo showWord={false} />
       </Link>
 

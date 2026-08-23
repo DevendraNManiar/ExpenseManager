@@ -1,5 +1,5 @@
-// MoneyOS — Prisma schema
-// Your personal financial operating system.
+// Expense Manager — Prisma schema
+// Your personal finance command center.
 //
 // Design notes:
 // - A single `Transaction` model is the central ledger (spec §22). Expenses,

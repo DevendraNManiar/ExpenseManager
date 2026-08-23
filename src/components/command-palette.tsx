@@ -21,7 +21,7 @@ const QUICK_ACTIONS = [
   { label: "View reports", href: "/reports", icon: Receipt },
 ];
 
-export const OPEN_COMMAND_EVENT = "moneyos:command";
+export const OPEN_COMMAND_EVENT = "expensemanager:command";
 
 export function CommandPalette() {
   const router = useRouter();

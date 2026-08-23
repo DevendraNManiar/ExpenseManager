@@ -31,7 +31,7 @@ function rows(r: ReportData): [string, string | number][] {
 }
 
 export function ReportExport({ report }: { report: ReportData }) {
-  const base = `moneyos-report-${report.label.replace(/\s+/g, "-").toLowerCase()}`;
+  const base = `expense-manager-report-${report.label.replace(/\s+/g, "-").toLowerCase()}`;
 
   function exportCsv() {
     const csv = ["Metric,Value", ...rows(report).map(([k, v]) => `"${k}",${typeof v === "number" ? v : `"${v}"`}`)].join("\n");

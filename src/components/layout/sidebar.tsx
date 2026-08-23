@@ -12,7 +12,7 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex lg:w-64 lg:shrink-0 lg:flex-col border-r bg-card/40">
       <div className="flex h-16 items-center px-6">
-        <Link href="/dashboard" aria-label="MoneyOS home">
+        <Link href="/dashboard" aria-label="Expense Manager home">
           <Logo />
         </Link>
       </div>

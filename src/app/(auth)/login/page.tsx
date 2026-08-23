@@ -46,7 +46,7 @@ function LoginForm() {
     <Card>
       <CardHeader>
         <CardTitle className="text-xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your MoneyOS account.</CardDescription>
+        <CardDescription>Sign in to your Expense Manager account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
@@ -63,11 +63,11 @@ function LoginForm() {
           </Button>
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          New to MoneyOS?{" "}
+          New to Expense Manager?{" "}
           <Link href="/signup" className="font-medium text-primary hover:underline">Create an account</Link>
         </p>
         <p className="mt-3 rounded-md bg-muted/50 p-2 text-center text-xs text-muted-foreground">
-          Demo: <span className="font-medium">demo@moneyos.app</span> / <span className="font-medium">demo1234</span>
+          Demo: <span className="font-medium">demo@expensemanagerde.in</span> / <span className="font-medium">demo1234</span>
         </p>
       </CardContent>
     </Card>

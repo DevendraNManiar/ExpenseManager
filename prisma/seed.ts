@@ -1,9 +1,9 @@
 /**
- * MoneyOS seed (spec §39). Creates a demo user with realistic data so the
+ * Expense Manager seed (spec §39). Creates a demo user with realistic data so the
  * app looks impressive immediately after setup.
  *
  * Run with: npm run db:seed
- * Demo login → email: demo@moneyos.app  password: demo1234
+ * Demo login → email: demo@expensemanagerde.in  password: demo1234
  */
 import { PrismaClient, TransactionType } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -29,10 +29,10 @@ async function main() {
   const passwordHash = await bcrypt.hash("demo1234", 10);
 
   const user = await prisma.user.upsert({
-    where: { email: "demo@moneyos.app" },
+    where: { email: "demo@expensemanagerde.in" },
     update: {},
     create: {
-      email: "demo@moneyos.app",
+      email: "demo@expensemanagerde.in",
       name: "Jaimin",
       passwordHash,
       emailVerified: new Date(),

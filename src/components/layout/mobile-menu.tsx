@@ -32,7 +32,7 @@ export function MobileMenu() {
       <SheetContent side="left" className="p-0">
         <div className="flex h-16 items-center justify-between px-5">
           <SheetTitle asChild>
-            <Link href="/dashboard" onClick={() => setOpen(false)} aria-label="MoneyOS home">
+            <Link href="/dashboard" onClick={() => setOpen(false)} aria-label="Expense Manager home">
               <Logo />
             </Link>
           </SheetTitle>

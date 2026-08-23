@@ -11,13 +11,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://expensemanagerde.in"),
   title: {
-    default: "MoneyOS — Your personal financial operating system",
-    template: "%s · MoneyOS",
+    default: "Expense Manager — Understand your money, plan your future",
+    template: "%s · Expense Manager",
   },
   description:
-    "Understand your money. Plan your future. Stay in control. MoneyOS is a premium personal finance command center.",
-  applicationName: "MoneyOS",
+    "Understand your money. Plan your future. Stay in control. Expense Manager is a premium personal finance command center.",
+  applicationName: "Expense Manager",
 };
 
 export const viewport: Viewport = {

@@ -1,21 +1,21 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: moneyos-db
+    container_name: expensemanager-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: moneyos
-      POSTGRES_PASSWORD: moneyos
-      POSTGRES_DB: moneyos
+      POSTGRES_USER: expensemanager
+      POSTGRES_PASSWORD: expensemanager
+      POSTGRES_DB: expensemanager
     ports:
       - "5432:5432"
     volumes:
-      - moneyos_pgdata:/var/lib/postgresql/data
+      - expensemanager_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U moneyos -d moneyos"]
+      test: ["CMD-SHELL", "pg_isready -U expensemanager -d expensemanager"]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
-  moneyos_pgdata:
+  expensemanager_pgdata:

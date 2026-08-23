@@ -1,14 +1,13 @@
-# MoneyOS
+# Expense Manager
 
 > Understand your money. Plan your future. Stay in control.
 
-MoneyOS is a premium personal finance command center — a **personal financial
-operating system** — that unifies expenses, income, budgets, bills, the
-electricity calculator, investments, IPOs, loans, goals, reports and insights.
+Expense Manager is a premium personal finance command center that unifies
+expenses, income, budgets, bills, the electricity calculator, investments, IPOs,
+loans, goals, reports and insights — with a 3D dashboard, a `Ctrl+K` command
+palette, and a mobile-first UI.
 
-This repository is being built in phases (see the roadmap below). It ships with
-a complete architecture, database schema, design system, app shell and a working
-dashboard from day one.
+Live: **https://expensemanagerde.in**
 
 ## Stack
 
@@ -43,7 +42,26 @@ npm run db:seed
 npm run dev               # http://localhost:3000
 ```
 
-Demo login (after seeding): **demo@moneyos.app** / **demo1234**
+Demo login (after seeding): **demo@expensemanagerde.in** / **demo1234**
+
+> Using it from your phone? Open the **Network** URL that `npm run dev` prints
+> (e.g. `http://192.168.1.42:3000`). LAN origins are auto-allowed for Server
+> Actions in `next.config.mjs`.
+
+## Deploy to Vercel
+
+1. Provision a hosted Postgres (Neon, Supabase or Vercel Postgres) and copy its
+   connection string.
+2. Import the GitHub repo into Vercel (framework auto-detected: Next.js).
+3. Set environment variables in Vercel → Settings → Environment Variables:
+   `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL=https://expensemanagerde.in`,
+   `NEXT_PUBLIC_APP_URL=https://expensemanagerde.in`, and optionally
+   `RESEND_API_KEY` / `EMAIL_FROM`.
+4. Push the schema to the production DB (from your machine, with `DATABASE_URL`
+   set to the hosted DB): `npm run db:push` (and `npm run db:seed` for demo data).
+5. Deploy. `npm run build` runs `prisma generate` automatically.
+6. Add the domain `expensemanagerde.in` in Vercel → Domains and point Hostinger's
+   DNS at Vercel (A record `76.76.21.21`, or the CNAME Vercel shows).
 
 ## Useful scripts
 
@@ -72,7 +90,7 @@ src/
     layout/           # sidebar, topbar, mobile nav, theme toggle
     dashboard/        # summary cards, charts, health, insights, goals
     utilities/        # electricity calculator
-    brand/            # MoneyOS logo
+    brand/            # Expense Manager logo
   lib/
     prisma.ts         # singleton Prisma client
     finance.ts        # EMI, amortization, affordability, electricity (pure)

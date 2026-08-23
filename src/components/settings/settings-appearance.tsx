@@ -22,7 +22,7 @@ export function SettingsAppearance() {
     <Card>
       <CardHeader>
         <CardTitle>Appearance</CardTitle>
-        <CardDescription>Choose how MoneyOS looks. System follows your device.</CardDescription>
+        <CardDescription>Choose how Expense Manager looks. System follows your device.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-3 sm:max-w-md">

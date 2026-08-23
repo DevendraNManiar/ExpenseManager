@@ -1,5 +1,5 @@
 /**
- * MoneyOS finance engine — pure functions, no I/O.
+ * Expense Manager finance engine — pure functions, no I/O.
  * All money in major units (₹), rounded to 2 dp where returned.
  */
 

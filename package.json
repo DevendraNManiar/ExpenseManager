@@ -1,8 +1,8 @@
 {
-  "name": "moneyos",
+  "name": "expense-manager",
   "version": "0.1.0",
   "private": true,
-  "description": "MoneyOS — your personal financial operating system.",
+  "description": "Expense Manager — your personal finance command center.",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

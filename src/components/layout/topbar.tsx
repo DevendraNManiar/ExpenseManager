@@ -22,9 +22,10 @@ interface Props {
   refs: { categories: CategoryRef[]; paymentMethods: PaymentMethodRef[] };
   userName: string;
   userEmail: string;
+  unread: number;
 }
 
-export function Topbar({ refs, userName, userEmail }: Props) {
+export function Topbar({ refs, userName, userEmail, unread }: Props) {
   const initial = (userName || userEmail || "?").charAt(0).toUpperCase();
 
   return (
@@ -48,10 +49,14 @@ export function Topbar({ refs, userName, userEmail }: Props) {
         <span className="hidden sm:inline-flex">
           <TransactionSheet refs={refs} />
         </span>
-        <Button asChild variant="ghost" size="icon" aria-label="Notifications" className="relative">
+        <Button asChild variant="ghost" size="icon" aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`} className="relative">
           <Link href="/notifications">
             <Bell className="size-5" />
-            <span className="absolute right-2 top-2 size-2 rounded-full bg-primary" />
+            {unread > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-4 text-primary-foreground">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
           </Link>
         </Button>
         <ThemeToggle />

@@ -207,3 +207,49 @@ export const contributionSchema = z.object({
   goalId: z.string().cuid(),
   amount: z.coerce.number().positive("Amount must be greater than zero"),
 });
+
+// ── Settings (spec §30) ────────────────────────────────────────
+
+export const profileInfoSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  currency: z.string().trim().min(1).max(6).default("INR"),
+  defaultPaymentMethod: z.string().trim().max(40).optional().or(z.literal("")),
+  financialYearStart: z.coerce.number().int().min(1).max(12).default(4),
+});
+
+export type ProfileInfoInput = z.infer<typeof profileInfoSchema>;
+
+export const financialsSchema = z.object({
+  monthlyIncome: z.coerce.number().nonnegative().optional().nullable(),
+  monthlyFixedExpenses: z.coerce.number().nonnegative().optional().nullable(),
+  currentSavings: z.coerce.number().nonnegative().optional().nullable(),
+});
+
+export type FinancialsInput = z.infer<typeof financialsSchema>;
+
+export const notificationPrefSchema = z.object({
+  emailEnabled: z.coerce.boolean().default(true),
+  expenseAdded: z.coerce.boolean().default(false),
+  largeExpenseAlert: z.coerce.boolean().default(true),
+  largeExpenseThreshold: z.coerce.number().nonnegative().default(5000),
+  budgetExceeded: z.coerce.boolean().default(true),
+  billReminder: z.coerce.boolean().default(true),
+  emiReminder: z.coerce.boolean().default(true),
+  investmentReminder: z.coerce.boolean().default(false),
+  monthlySummary: z.coerce.boolean().default(true),
+});
+
+export type NotificationPrefInput = z.infer<typeof notificationPrefSchema>;
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Enter your current password"),
+    newPassword: z.string().min(8, "Use at least 8 characters").max(100),
+    confirmPassword: z.string().min(1),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

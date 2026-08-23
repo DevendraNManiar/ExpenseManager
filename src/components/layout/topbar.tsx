@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Logo } from "@/components/brand/logo";
 import { TransactionSheet } from "@/components/transactions/transaction-sheet";
+import { MobileMenu } from "@/components/layout/mobile-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,7 @@ export function Topbar({ refs, userName, userEmail }: Props) {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur lg:px-8">
+      <MobileMenu />
       <Link href="/dashboard" className="lg:hidden" aria-label="MoneyOS home">
         <Logo showWord={false} />
       </Link>
@@ -43,7 +45,9 @@ export function Topbar({ refs, userName, userEmail }: Props) {
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
-        <TransactionSheet refs={refs} />
+        <span className="hidden sm:inline-flex">
+          <TransactionSheet refs={refs} />
+        </span>
         <Button asChild variant="ghost" size="icon" aria-label="Notifications" className="relative">
           <Link href="/notifications">
             <Bell className="size-5" />

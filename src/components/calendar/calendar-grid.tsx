@@ -51,7 +51,7 @@ export function CalendarGrid({
             <div
               key={i}
               className={cn(
-                "min-h-24 border-b border-r p-1.5 last:border-r-0 [&:nth-child(7n)]:border-r-0",
+                "min-h-16 min-w-0 overflow-hidden border-b border-r p-1 last:border-r-0 sm:min-h-24 sm:p-1.5 [&:nth-child(7n)]:border-r-0",
                 day == null && "bg-muted/20",
               )}
             >

@@ -20,8 +20,8 @@ export default async function AppLayout({
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar refs={refs} userName={user.name ?? ""} userEmail={user.email} />
-        <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-10">{children}</main>
-        <MobileNav />
+        <main className="flex-1 px-4 pb-28 pt-6 lg:px-8 lg:pb-10">{children}</main>
+        <MobileNav refs={refs} />
       </div>
     </div>
   );

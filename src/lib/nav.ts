@@ -48,8 +48,3 @@ export const navGroups: { id: NavItem["group"]; label: string }[] = [
   { id: "planning", label: "Plan & Grow" },
   { id: "system", label: "Insights & System" },
 ];
-
-/** Items surfaced in the mobile bottom bar. */
-export const mobileNav: NavItem[] = navItems.filter((i) =>
-  ["/dashboard", "/expenses", "/transactions", "/utilities", "/reports"].includes(i.href),
-);

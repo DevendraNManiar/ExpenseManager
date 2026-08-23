@@ -75,21 +75,28 @@ export function BudgetEditor({
             const near = limit > 0 && !over && pct >= 80;
             return (
               <div key={l.categoryId} className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <span className="size-2.5 rounded-full" style={{ background: l.color ?? "#64748b" }} />
-                  <span className="flex-1 text-sm font-medium">{l.name}</span>
-                  <span className="tabular text-xs text-muted-foreground">
-                    {formatCurrency(l.spent)} spent
-                  </span>
-                  <div className="relative w-32">
-                    <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₹</span>
-                    <Input
-                      inputMode="decimal"
-                      value={limits[l.categoryId] ?? ""}
-                      onChange={(e) => setLimits((p) => ({ ...p, [l.categoryId]: e.target.value }))}
-                      placeholder="0"
-                      className="pl-6 text-right"
-                    />
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <div className="flex items-center gap-3">
+                    <span className="size-2.5 rounded-full" style={{ background: l.color ?? "#64748b" }} />
+                    <span className="flex-1 text-sm font-medium">{l.name}</span>
+                    <span className="tabular text-xs text-muted-foreground sm:hidden">
+                      {formatCurrency(l.spent)} spent
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 sm:ml-auto">
+                    <span className="tabular hidden text-xs text-muted-foreground sm:inline">
+                      {formatCurrency(l.spent)} spent
+                    </span>
+                    <div className="relative w-full sm:w-32">
+                      <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground">₹</span>
+                      <Input
+                        inputMode="decimal"
+                        value={limits[l.categoryId] ?? ""}
+                        onChange={(e) => setLimits((p) => ({ ...p, [l.categoryId]: e.target.value }))}
+                        placeholder="0"
+                        className="pl-6 text-right"
+                      />
+                    </div>
                   </div>
                 </div>
                 {limit > 0 && (

@@ -102,11 +102,34 @@
   border-color: hsl(var(--border));
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
+  /* Kill the grey tap flash and let overlays own their own scroll chaining. */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Comfortable, momentum-friendly scrolling inside scroll regions on touch. */
+@media (hover: none) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Safe-area helpers for notch / home-indicator phones. */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.h-safe-nav {
+  height: calc(4rem + env(safe-area-inset-bottom));
 }
 
 /* Numeric figures should be tabular so money columns align. */

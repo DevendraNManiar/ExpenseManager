@@ -10,10 +10,10 @@ export default function LandingPage() {
         <Logo />
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard">Sign in</Link>
+            <Link href="/login">Sign in</Link>
           </Button>
           <Button size="sm" asChild>
-            <Link href="/dashboard">Open app</Link>
+            <Link href="/signup">Get started</Link>
           </Button>
         </div>
       </header>

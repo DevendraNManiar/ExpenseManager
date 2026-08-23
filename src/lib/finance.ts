@@ -169,6 +169,41 @@ export function savingsRate(income: number, expenses: number): number {
   return round2(((income - expenses) / income) * 100);
 }
 
+// ── Financial health score (spec §41) ──────────────────────────
+// Transparent, informational only — NOT financial advice.
+
+export interface HealthInput {
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  existingEmi: number;
+  currentSavings: number;
+  overBudget: boolean;
+}
+
+/**
+ * 0–100 score from four transparent components:
+ *   savings rate (0–40), EMI-to-income (0–30), emergency buffer (0–20),
+ *   budget adherence (0–10).
+ */
+export function computeHealthScore(input: HealthInput): number {
+  const rate = savingsRate(input.monthlyIncome, input.monthlyExpenses);
+  const savingsPts = Math.max(0, Math.min(40, rate * 0.8));
+
+  const emiRatio =
+    input.monthlyIncome > 0 ? (input.existingEmi / input.monthlyIncome) * 100 : 100;
+  const emiPts = emiRatio <= 20 ? 30 : emiRatio <= 40 ? 22 : emiRatio <= 50 ? 12 : 4;
+
+  const monthsBuffer =
+    input.monthlyExpenses > 0 ? input.currentSavings / input.monthlyExpenses : 0;
+  const bufferPts = Math.max(0, Math.min(20, (monthsBuffer / 3) * 20));
+
+  const budgetPts = input.overBudget ? 0 : 10;
+
+  return Math.round(
+    Math.max(0, Math.min(100, savingsPts + emiPts + bufferPts + budgetPts)),
+  );
+}
+
 export interface GoalProjection {
   progressPct: number;
   remaining: number;

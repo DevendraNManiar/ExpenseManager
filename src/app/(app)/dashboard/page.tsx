@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { getDashboardData } from "@/lib/demo-data";
+import { redirect } from "next/navigation";
+import { getCurrentUserId } from "@/lib/auth";
+import { getDashboardData } from "@/server/queries/dashboard";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { FinancialHealth } from "@/components/dashboard/financial-health";
 import { IncomeExpenseChart } from "@/components/dashboard/income-expense-chart";
@@ -17,8 +19,12 @@ function greeting(d = new Date()) {
   return "Good evening";
 }
 
-export default function DashboardPage() {
-  const data = getDashboardData();
+export default async function DashboardPage() {
+  const userId = await getCurrentUserId();
+  if (!userId) redirect("/login");
+
+  const data = await getDashboardData(userId);
+  const hasCategorySpend = data.categorySpend.length > 0;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -36,16 +42,16 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <IncomeExpenseChart data={data.incomeVsExpenses} />
-          <CategoryDonut data={data.categorySpend} />
+          {hasCategorySpend && <CategoryDonut data={data.categorySpend} />}
         </div>
         <div className="space-y-6">
           <FinancialHealth score={data.healthScore} />
-          <UpcomingList items={data.upcoming} />
-          <GoalsWidget goals={data.goals} />
+          {data.upcoming.length > 0 && <UpcomingList items={data.upcoming} />}
+          {data.goals.length > 0 && <GoalsWidget goals={data.goals} />}
         </div>
       </div>
 
-      <InsightsWidget insights={data.insights} />
+      {data.insights.length > 0 && <InsightsWidget insights={data.insights} />}
     </div>
   );
 }

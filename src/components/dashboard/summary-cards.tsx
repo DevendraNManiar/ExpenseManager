@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { AnimatedCounter } from "@/components/animated-counter";
 import { formatPercent } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { SummaryMetric } from "@/lib/demo-data";
+import type { SummaryMetric } from "@/lib/dashboard-types";
 
 const container = {
   hidden: {},

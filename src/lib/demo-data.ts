@@ -20,6 +20,13 @@ export function getDashboardData(): DashboardData {
     monthLabel: "August 2026",
     currency,
     healthScore: 82,
+    orbit: [
+      { key: "income", label: "Income", value: income, color: "#10b981" },
+      { key: "expenses", label: "Expenses", value: expenses, color: "#ef4444" },
+      { key: "savings", label: "Savings", value: Math.max(0, income - expenses), color: "#14b8a6" },
+      { key: "investments", label: "Investments", value: 411500, color: "#0ea5e9" },
+      { key: "debt", label: "Debt", value: 2450244, color: "#f59e0b" },
+    ],
     metrics: [
       {
         key: "balance",

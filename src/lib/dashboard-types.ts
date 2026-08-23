@@ -7,12 +7,20 @@ export interface SummaryMetric {
   hint: string;
 }
 
+export interface OrbitNode {
+  key: string;
+  label: string;
+  value: number;
+  color: string;
+}
+
 export interface DashboardData {
   userName: string;
   monthLabel: string;
   currency: string;
   metrics: SummaryMetric[];
   healthScore: number;
+  orbit: OrbitNode[];
   incomeVsExpenses: { label: string; income: number; expenses: number }[];
   categorySpend: { name: string; value: number; color: string }[];
   dailySpend: { day: string; amount: number }[];

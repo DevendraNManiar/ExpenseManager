@@ -20,11 +20,11 @@ export function UpcomingList({
         <CardTitle>Upcoming</CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">
-        {items.map((it) => {
+        {items.map((it, idx) => {
           const Icon = iconFor[it.type] ?? CalendarClock;
           return (
             <div
-              key={it.title}
+              key={`${it.title}-${it.date}-${idx}`}
               className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-accent/50"
             >
               <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">

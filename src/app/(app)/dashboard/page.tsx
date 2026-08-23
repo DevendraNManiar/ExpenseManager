@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUserId } from "@/lib/auth";
 import { getDashboardData } from "@/server/queries/dashboard";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
+import { FinancialOrbitHero } from "@/components/dashboard/financial-orbit-hero";
 import { FinancialHealth } from "@/components/dashboard/financial-health";
 import { IncomeExpenseChart } from "@/components/dashboard/income-expense-chart";
 import { CategoryDonut } from "@/components/dashboard/category-donut";
@@ -41,6 +42,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+          {data.orbit.length > 0 && <FinancialOrbitHero nodes={data.orbit} />}
           <IncomeExpenseChart data={data.incomeVsExpenses} />
           {hasCategorySpend && <CategoryDonut data={data.categorySpend} />}
         </div>

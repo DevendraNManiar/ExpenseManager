@@ -18,10 +18,16 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen bg-background app-aurora">
+      <a
+        href="#main-content"
+        className="sr-only left-4 top-4 z-50 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:absolute"
+      >
+        Skip to content
+      </a>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar refs={refs} userName={user.name ?? ""} userEmail={user.email} unread={unread} />
-        <main className="flex-1 px-4 pb-28 pt-6 lg:px-8 lg:pb-10">{children}</main>
+        <main id="main-content" className="flex-1 px-4 pb-28 pt-6 lg:px-8 lg:pb-10">{children}</main>
         <MobileNav refs={refs} />
       </div>
     </div>

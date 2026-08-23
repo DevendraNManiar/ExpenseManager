@@ -5,6 +5,8 @@ import { dec, currentMonthRange, previousMonthRange, MONTH_LABELS, monthRange } 
 import { savingsRate, computeHealthScore } from "@/lib/finance";
 import { percentChange } from "@/lib/format";
 import { generateInsights } from "@/server/queries/insights";
+import { getPortfolioSummary } from "@/server/queries/investments";
+import { listLoans } from "@/server/queries/loans";
 import type { DashboardData } from "@/lib/dashboard-types";
 
 const OUTFLOW: TransactionType[] = ["EXPENSE", "EMI", "BILL"];
@@ -71,7 +73,8 @@ export async function getDashboardData(userId: string, now = new Date()): Promis
     }),
     prisma.loanPayment.findMany({
       where: { loan: { userId }, isPaid: false, dueDate: { gte: now } },
-      orderBy: { dueDate: "asc" },
+      orderBy: [{ loanId: "asc" }, { dueDate: "asc" }],
+      distinct: ["loanId"], // only the next EMI per loan
       take: 5,
       include: { loan: { select: { name: true } } },
     }),
@@ -87,10 +90,22 @@ export async function getDashboardData(userId: string, now = new Date()): Promis
     bills.filter((b) => b.dueDate < cur.end).reduce((s, b) => s + dec(b.amount), 0) +
     loanPayments.filter((p) => p.dueDate < cur.end).reduce((s, p) => s + dec(p.emiAmount), 0);
 
-  const [existingEmi, insights] = await Promise.all([
+  const [existingEmi, insights, portfolio, loanSummaries] = await Promise.all([
     sumByType(userId, ["EMI"], cur.start, cur.end),
     generateInsights(userId, now),
+    getPortfolioSummary(userId),
+    listLoans(userId),
   ]);
+  const investmentsTotal = portfolio.totalCurrent;
+  const debtTotal = loanSummaries.reduce((s, l) => s + l.remainingBalance, 0);
+  const orbit = [
+    { key: "income", label: "Income", value: income, color: "#10b981" },
+    { key: "expenses", label: "Expenses", value: expenses, color: "#ef4444" },
+    { key: "savings", label: "Savings", value: Math.max(0, income - expenses), color: "#14b8a6" },
+    { key: "investments", label: "Investments", value: investmentsTotal, color: "#0ea5e9" },
+    { key: "debt", label: "Debt", value: debtTotal, color: "#f59e0b" },
+  ].filter((n) => n.value > 0);
+
   const healthScore = computeHealthScore({
     monthlyIncome: income,
     monthlyExpenses: expenses,
@@ -159,6 +174,7 @@ export async function getDashboardData(userId: string, now = new Date()): Promis
     monthLabel: `${now.toLocaleString("en-US", { month: "long" })} ${now.getFullYear()}`,
     currency,
     healthScore,
+    orbit,
     metrics: [
       { key: "balance", label: "Total Balance", value: balance, currency, changePct: 0, hint: "savings + net cashflow" },
       { key: "income", label: "Monthly Income", value: income, currency, changePct: 0, hint: "this month" },

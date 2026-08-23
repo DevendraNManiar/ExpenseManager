@@ -8,6 +8,11 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Logo } from "@/components/brand/logo";
 import { TransactionSheet } from "@/components/transactions/transaction-sheet";
 import { MobileMenu } from "@/components/layout/mobile-menu";
+import { OPEN_COMMAND_EVENT } from "@/components/command-palette";
+
+function openCommand() {
+  window.dispatchEvent(new Event(OPEN_COMMAND_EVENT));
+}
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +42,7 @@ export function Topbar({ refs, userName, userEmail, unread }: Props) {
 
       <button
         type="button"
+        onClick={openCommand}
         className="hidden flex-1 items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted sm:flex sm:max-w-md"
         aria-label="Search (Ctrl+K)"
       >
@@ -46,6 +52,9 @@ export function Topbar({ refs, userName, userEmail, unread }: Props) {
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
+        <Button variant="ghost" size="icon" className="sm:hidden" aria-label="Search" onClick={openCommand}>
+          <Search className="size-5" />
+        </Button>
         <span className="hidden sm:inline-flex">
           <TransactionSheet refs={refs} />
         </span>

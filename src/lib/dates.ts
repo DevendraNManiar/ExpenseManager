@@ -26,3 +26,28 @@ export const MONTH_LABELS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
+
+export type Frequency = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";
+
+/** Advance a date by one period of the given frequency (immutably). */
+export function advanceDate(date: Date, frequency: Frequency): Date {
+  const d = new Date(date);
+  switch (frequency) {
+    case "DAILY":
+      d.setDate(d.getDate() + 1);
+      break;
+    case "WEEKLY":
+      d.setDate(d.getDate() + 7);
+      break;
+    case "MONTHLY":
+      d.setMonth(d.getMonth() + 1);
+      break;
+    case "QUARTERLY":
+      d.setMonth(d.getMonth() + 3);
+      break;
+    case "YEARLY":
+      d.setFullYear(d.getFullYear() + 1);
+      break;
+  }
+  return d;
+}

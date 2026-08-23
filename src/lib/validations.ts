@@ -62,3 +62,58 @@ export const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   password: z.string().min(1),
 });
+
+// ── Utilities: electricity reading (spec §13–15, §35) ──────────
+
+export const utilityReadingSchema = z
+  .object({
+    type: z.string().trim().min(1).max(30).default("electricity"),
+    label: z.string().trim().max(60).optional().or(z.literal("")),
+    month: z.coerce.number().int().min(1).max(12),
+    year: z.coerce.number().int().min(2000).max(2100),
+    readingDate: z.coerce.date(),
+    previousReading: z.coerce.number().nonnegative("Cannot be negative"),
+    currentReading: z.coerce.number().nonnegative("Cannot be negative"),
+    unitRate: z.coerce.number().nonnegative("Rate cannot be negative"),
+    fixedCharges: z.coerce.number().nonnegative().default(0),
+    taxes: z.coerce.number().nonnegative().default(0),
+    notes: z.string().trim().max(500).optional().or(z.literal("")),
+  })
+  // Current reading cannot be less than previous (spec §35).
+  .refine((d) => d.currentReading >= d.previousReading, {
+    message: "Current reading must be ≥ previous reading",
+    path: ["currentReading"],
+  });
+
+export type UtilityReadingInput = z.infer<typeof utilityReadingSchema>;
+
+// ── Bills (spec §24) ───────────────────────────────────────────
+
+export const billSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  category: z.string().trim().max(40).optional().or(z.literal("")),
+  amount: z.coerce.number().positive("Amount must be greater than zero"),
+  dueDate: z.coerce.date(),
+  isRecurring: z.coerce.boolean().default(false),
+  frequency: z.enum(["MONTHLY", "QUARTERLY", "YEARLY"]).optional(),
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
+});
+
+export type BillInput = z.infer<typeof billSchema>;
+
+// ── Recurring transactions (spec §23) ──────────────────────────
+
+export const recurringFrequencies = ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"] as const;
+
+export const recurringSchema = z.object({
+  type: z.enum(transactionTypes).default("EXPENSE"),
+  name: z.string().trim().min(1, "Name is required").max(80),
+  amount: z.coerce.number().positive("Amount must be greater than zero"),
+  categoryName: z.string().trim().max(40).optional().or(z.literal("")),
+  frequency: z.enum(recurringFrequencies).default("MONTHLY"),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().optional().nullable(),
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
+});
+
+export type RecurringInput = z.infer<typeof recurringSchema>;

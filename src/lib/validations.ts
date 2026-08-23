@@ -189,3 +189,21 @@ export const ipoSchema = z.object({
 });
 
 export type IpoInput = z.infer<typeof ipoSchema>;
+
+// ── Financial goals (spec §21) ─────────────────────────────────
+
+export const goalSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  targetAmount: z.coerce.number().positive("Target must be greater than zero"),
+  currentAmount: z.coerce.number().nonnegative("Cannot be negative").default(0),
+  targetDate: z.coerce.date().optional().nullable(),
+  monthlyContribution: z.coerce.number().nonnegative().optional().nullable(),
+  color: z.string().max(20).optional().or(z.literal("")),
+});
+
+export type GoalInput = z.infer<typeof goalSchema>;
+
+export const contributionSchema = z.object({
+  goalId: z.string().cuid(),
+  amount: z.coerce.number().positive("Amount must be greater than zero"),
+});

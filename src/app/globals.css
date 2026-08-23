@@ -163,6 +163,25 @@ body {
   border-radius: 9999px;
 }
 
+@media print {
+  /* Strip app chrome so reports print clean to PDF. */
+  aside,
+  header.sticky,
+  nav.fixed,
+  .print\:hidden {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .app-aurora {
+    background-image: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

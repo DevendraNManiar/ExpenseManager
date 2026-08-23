@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { dec, currentMonthRange, previousMonthRange, MONTH_LABELS, monthRange } from "@/lib/dates";
 import { savingsRate, computeHealthScore } from "@/lib/finance";
 import { percentChange } from "@/lib/format";
+import { generateInsights } from "@/server/queries/insights";
 import type { DashboardData } from "@/lib/dashboard-types";
 
 const OUTFLOW: TransactionType[] = ["EXPENSE", "EMI", "BILL"];
@@ -86,7 +87,10 @@ export async function getDashboardData(userId: string, now = new Date()): Promis
     bills.filter((b) => b.dueDate < cur.end).reduce((s, b) => s + dec(b.amount), 0) +
     loanPayments.filter((p) => p.dueDate < cur.end).reduce((s, p) => s + dec(p.emiAmount), 0);
 
-  const existingEmi = await sumByType(userId, ["EMI"], cur.start, cur.end);
+  const [existingEmi, insights] = await Promise.all([
+    sumByType(userId, ["EMI"], cur.start, cur.end),
+    generateInsights(userId, now),
+  ]);
   const healthScore = computeHealthScore({
     monthlyIncome: income,
     monthlyExpenses: expenses,
@@ -173,28 +177,6 @@ export async function getDashboardData(userId: string, now = new Date()): Promis
       target: dec(g.targetAmount),
       color: g.color ?? "#10b981",
     })),
-    insights: buildInsights({ expenses, prevExpenses, income, upcomingBillsTotal, currency }),
+    insights,
   };
-}
-
-function buildInsights(d: {
-  expenses: number;
-  prevExpenses: number;
-  income: number;
-  upcomingBillsTotal: number;
-  currency: string;
-}): DashboardData["insights"] {
-  const out: DashboardData["insights"] = [];
-  if (d.prevExpenses > 0) {
-    const change = percentChange(d.expenses, d.prevExpenses);
-    if (change < -1) out.push({ tone: "positive", text: `You spent ${Math.abs(change).toFixed(1)}% less this month than last month.` });
-    else if (change > 1) out.push({ tone: "warning", text: `Your spending is up ${change.toFixed(1)}% versus last month.` });
-  }
-  const available = d.income - d.expenses - d.upcomingBillsTotal;
-  out.push({ tone: "neutral", text: `You have ${new Intl.NumberFormat("en-IN", { style: "currency", currency: d.currency, maximumFractionDigits: 0 }).format(Math.max(0, available))} available after upcoming commitments.` });
-  if (d.income > 0) {
-    const rate = savingsRate(d.income, d.expenses);
-    out.push({ tone: rate >= 20 ? "positive" : "neutral", text: `Your savings rate this month is ${rate.toFixed(1)}%.` });
-  }
-  return out;
 }

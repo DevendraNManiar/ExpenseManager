@@ -1,7 +1,7 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import type { TransactionType } from "@prisma/client";
+import { Prisma, type TransactionType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { signupSchema, type SignupInput } from "@/lib/validations";
 import type { ActionResult } from "@/server/types";
@@ -60,6 +60,33 @@ export async function signup(input: SignupInput): Promise<ActionResult> {
     return { ok: true };
   } catch (error) {
     console.error("[signup]", error);
+
+    // A duplicate email can slip past the pre-check under a race; report it clearly.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return { ok: false, error: "An account with this email already exists." };
+    }
+
+    // The database schema has not been applied (tables missing). This is the most
+    // common production misconfiguration — surface it instead of a generic message.
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === "P2021" || error.code === "P2022")
+    ) {
+      return {
+        ok: false,
+        error:
+          "The database isn't set up yet (schema not applied). Run `prisma db push` against the production database.",
+      };
+    }
+
+    // Cannot reach the database at all (bad/missing DATABASE_URL, network, credentials).
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      return {
+        ok: false,
+        error: "Cannot connect to the database. Check the DATABASE_URL configuration.",
+      };
+    }
+
     return { ok: false, error: "Could not create your account. Please try again." };
   }
 }

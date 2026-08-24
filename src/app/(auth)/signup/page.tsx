@@ -10,10 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { LoadingOverlay } from "@/components/loading-overlay";
 
 export default function SignupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  // Set once the account is created — drives the full-screen overlay through the
+  // auto sign-in and dashboard navigation. Kept separate from `loading` so a
+  // validation error never flashes the "Setting up your account…" message.
+  const [navigating, setNavigating] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,9 +39,9 @@ export default function SignupPage() {
       toast.error(res.error ?? "Could not sign up.");
       return;
     }
-    // Auto sign-in after successful signup.
+    // Account created — show the overlay and hold it through auto sign-in + nav.
+    setNavigating(true);
     const signInRes = await signIn("credentials", { email, password, redirect: false });
-    setLoading(false);
     if (signInRes?.error) {
       toast.success("Account created — please sign in.");
       router.push("/login");
@@ -45,8 +51,12 @@ export default function SignupPage() {
     router.refresh();
   }
 
+  const busy = loading || navigating;
+
   return (
-    <Card>
+    <>
+      {navigating && <LoadingOverlay label="Setting up your account…" />}
+      <Card>
       <CardHeader>
         <CardTitle className="text-xl">Create your account</CardTitle>
         <CardDescription>Start running your money like an OS.</CardDescription>
@@ -68,8 +78,15 @@ export default function SignupPage() {
             <Input id="password" name="password" type="password" autoComplete="new-password" required placeholder="At least 8 characters" />
             {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Creating account…" : "Create account"}
+          <Button type="submit" className="w-full" disabled={busy}>
+            {busy ? (
+              <>
+                <Spinner className="h-4 w-4" />
+                Creating account…
+              </>
+            ) : (
+              "Create account"
+            )}
           </Button>
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
@@ -78,5 +95,6 @@ export default function SignupPage() {
         </p>
       </CardContent>
     </Card>
+    </>
   );
 }

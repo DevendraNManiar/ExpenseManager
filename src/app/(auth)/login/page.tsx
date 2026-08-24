@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { LoadingOverlay } from "@/components/loading-overlay";
 
 export default function LoginPage() {
   return (
@@ -23,6 +25,10 @@ function LoginForm() {
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") ?? "/dashboard";
   const [loading, setLoading] = useState(false);
+  // Set once credentials are accepted — drives the full-screen overlay while the
+  // dashboard route loads. Kept separate from `loading` so a failed attempt never
+  // flashes the "Taking you to your dashboard…" message.
+  const [navigating, setNavigating] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,17 +39,23 @@ function LoginForm() {
       password: String(form.get("password")),
       redirect: false,
     });
-    setLoading(false);
     if (res?.error) {
+      setLoading(false);
       toast.error("Invalid email or password.");
       return;
     }
+    // Success — show the overlay and hold it until the dashboard unmounts this page.
+    setNavigating(true);
     router.push(callbackUrl);
     router.refresh();
   }
 
+  const busy = loading || navigating;
+
   return (
-    <Card>
+    <>
+      {navigating && <LoadingOverlay label="Taking you to your dashboard…" />}
+      <Card>
       <CardHeader>
         <CardTitle className="text-xl">Welcome back</CardTitle>
         <CardDescription>Sign in to your Expense Manager account.</CardDescription>
@@ -58,8 +70,15 @@ function LoginForm() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" name="password" type="password" autoComplete="current-password" required placeholder="••••••••" />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in…" : "Sign in"}
+          <Button type="submit" className="w-full" disabled={busy}>
+            {busy ? (
+              <>
+                <Spinner className="h-4 w-4" />
+                Signing in…
+              </>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
@@ -71,5 +90,6 @@ function LoginForm() {
         </p>
       </CardContent>
     </Card>
+    </>
   );
 }
